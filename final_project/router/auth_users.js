@@ -7,6 +7,10 @@ let users = [
     {
         "username":"test",
         "password":"test123"
+    },
+    {
+        "username":"test1",
+        "password":"test123"
     }
 ];
 
@@ -61,9 +65,9 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
- const isbn = req.params.isbn; // Get the ISBN from request parameters
+  const isbn = req.params.isbn; // Get the ISBN from request parameters
   const review = req.query.review; // Get the review from request query
-  const username = req.session.username; // Get the username from session (assuming session middleware is used)
+  const username = req.session.authorization.username; // Get the username from session (assuming session middleware is used)
 
   // Check if the ISBN exists in the books object
   if (books.hasOwnProperty(isbn)) {
@@ -73,18 +77,44 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     if (book.reviews.hasOwnProperty(username)) {
       // If the user has already posted a review, modify the existing review
       book.reviews[username] = review;
-      return res.status(200).json({ message: "Review updated successfully." });
+      console.log("1", book.reviews)
+      console.log("1.a", books)
+      return res.send( "The review for the book with ISBN  1 has been added/updated." );
     } else {
       // If the user has not posted a review, add a new review for the book
       book.reviews[username] = review;
-      return res.status(200).json({ message: "Review added successfully." });
+      console.log("2", book.reviews)
+      console.log("2.a", books)
+
+      return res.send( "The review for the book with ISBN  1 has been added/updated." );
+    }
+  } else {
+    // If the ISBN does not exist in the books object, return an error message
+    return res.send({ message: "Book not found with the provided ISBN." });
+  } 
+});
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+  const isbn = req.params.isbn; // Get the ISBN from request parameters
+  const username = req.session.username; // Get the username from session (assuming session middleware is used)
+
+  // Check if the ISBN exists in the books object
+  if (books.hasOwnProperty(isbn)) {
+    const book = books[isbn]; // Get the book object for the given ISBN
+
+    // Check if the user has posted a review for this book
+    if (book.reviews.hasOwnProperty(username)) {
+      // If the user has posted a review, delete the review
+      delete book.reviews[username];
+      return res.status(200).json({ message: "Review deleted successfully." });
+    } else {
+      // If the user has not posted a review, return an error message
+      return res.status(404).json({ message: "Review not found for the given ISBN and username." });
     }
   } else {
     // If the ISBN does not exist in the books object, return an error message
     return res.status(404).json({ message: "Book not found with the provided ISBN." });
-  } 
+  }
 });
-
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users;
