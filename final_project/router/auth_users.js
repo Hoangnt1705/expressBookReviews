@@ -62,7 +62,7 @@ regd_users.post("/login", (req,res) => {
   }
 });
 
-// Add a book review
+// Add/update a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   //Write your code here
   const isbn = req.params.isbn; // Get the ISBN from request parameters
@@ -95,7 +95,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
 });
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn; // Get the ISBN from request parameters
-  const username = req.session.username; // Get the username from session (assuming session middleware is used)
+  const username = req.session.authorization.username; // Get the username from session (assuming session middleware is used)
 
   // Check if the ISBN exists in the books object
   if (books.hasOwnProperty(isbn)) {
