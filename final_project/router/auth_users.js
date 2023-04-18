@@ -86,7 +86,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
       console.log("2", book.reviews)
       console.log("2.a", books)
 
-      return res.send( "The review for the book with ISBN  1 has been added/updated." );
+      return res.send( `The review for the book with ISBN  ${isbn} has been added/updated.` );
     }
   } else {
     // If the ISBN does not exist in the books object, return an error message
@@ -105,14 +105,14 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
     if (book.reviews.hasOwnProperty(username)) {
       // If the user has posted a review, delete the review
       delete book.reviews[username];
-      return res.status(200).json({ message: "Review deleted successfully." });
+      return res.send( `Reviews for the ISBN  ${isbn} posted by the user ${username} deleted .` );
     } else {
       // If the user has not posted a review, return an error message
-      return res.status(404).json({ message: "Review not found for the given ISBN and username." });
+      return res.send( "Review not found for the given ISBN and username." );
     }
   } else {
     // If the ISBN does not exist in the books object, return an error message
-    return res.status(404).json({ message: "Book not found with the provided ISBN." });
+    return res.send( "Book not found with the provided ISBN." );
   }
 });
 module.exports.authenticated = regd_users;
